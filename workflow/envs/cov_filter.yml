@@ -12,5 +12,3 @@ dependencies:
   - gcc==13.2.0
   - binutils=2.40
   - make=4.3
-  - pip:
-      - pyd4
