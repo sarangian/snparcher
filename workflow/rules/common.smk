@@ -1,3 +1,4 @@
+#!/opt/conda/envs/snparcher/bin/python3
 import sys
 import os
 import tempfile
