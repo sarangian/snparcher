@@ -10,8 +10,6 @@ rule sentieon_map:
     params:
         rg = get_read_group,
         lic = config['sentieon_lic']
-    conda:
-        "../envs/sentieon.yml"
     log:
         "logs/{refGenome}/sentieon_map/{sample}/{run}.txt"
     benchmark:
@@ -29,8 +27,6 @@ rule merge_bams:
     output:
         bam = temp("results/{refGenome}/bams/postMerge/{sample}.bam"),
         bai = temp("results/{refGenome}/bams/postMerge/{sample}.bam.bai")
-    conda:
-        "../envs/fastq2bam.yml"
     log:
         "logs/{refGenome}/merge_bams/{sample}.txt"
     benchmark:
@@ -48,8 +44,6 @@ rule sentieon_dedup:
         metrics = temp("results/{refGenome}/summary_stats/{sample}/sentieon_dedup_metrics.txt")
     params:
         lic = config['sentieon_lic']
-    conda:
-        "../envs/sentieon.yml"
     log:
         "logs/{refGenome}/sentieon_dedup/{sample}.txt"
     benchmark:
@@ -73,8 +67,6 @@ rule sentieon_haplotyper:
     output:
         gvcf = "results/{refGenome}/gvcfs/{sample}.g.vcf.gz",
         gvcf_idx = "results/{refGenome}/gvcfs/{sample}.g.vcf.gz.tbi",
-    conda:
-        "../envs/sentieon.yml"
     log:
         "logs/{refGenome}/sentieon_haplotyper/{sample}.txt"
     benchmark:
@@ -97,8 +89,6 @@ rule sentieon_combine_gvcf:
     params:
         glist = lambda wc, input: " ".join(["-v " + gvcf for gvcf in input['gvcfs']]),
         lic = config['sentieon_lic']
-    conda:
-        "../envs/sentieon.yml"
     log:
         "logs/{refGenome}/sentieon_combine_gvcf/log.txt"
     benchmark:
@@ -122,8 +112,6 @@ rule filter_vcf:
     output:
         vcf = "results/{refGenome}/{prefix}_raw.vcf.gz",
         tbi = "results/{refGenome}/{prefix}_raw.vcf.gz.tbi"
-    conda:
-        "../envs/bam2vcf.yml"
     log:
         "logs/{refGenome}/sentieon_filter_vcfs/{prefix}_log.txt"
     shadow: "minimal"

@@ -9,8 +9,6 @@ rule bwa_map:
         bai = temp("results/{refGenome}/bams/preMerge/{sample}/{run}.bam.bai"),
     params:
         rg = get_read_group
-    conda:
-        "../envs/fastq2bam.yml"
     log:
         "logs/{refGenome}/bwa_mem/{sample}/{run}.txt"
     benchmark:
@@ -24,8 +22,6 @@ rule merge_bams:
     output:
         bam = temp("results/{refGenome}/bams/postMerge/{sample}.bam"),
         bai = temp("results/{refGenome}/bams/postMerge/{sample}.bam.bai")
-    conda:
-        "../envs/fastq2bam.yml"
     log:
         "logs/{refGenome}/merge_bams/{sample}.txt"
     benchmark:
@@ -39,8 +35,6 @@ rule dedup:
     output:
         dedupBam = "results/{refGenome}/bams/{sample}_final.bam",
         dedupBai = "results/{refGenome}/bams/{sample}_final.bam.bai",
-    conda:
-        "../envs/sambamba.yml"
     log:
         "logs/{refGenome}/sambamba_dedup/{sample}.txt"
     benchmark:

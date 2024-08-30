@@ -7,8 +7,6 @@ rule picard_intervals:
         intervals = temp("results/{refGenome}/intervals/picard_interval_list.list")
     params:
         minNmer = int(config['minNmer'])
-    conda:
-        '../envs/bam2vcf.yml'
     log:
         "logs/{refGenome}/picard_intervals/log.txt"
     benchmark:
@@ -46,8 +44,6 @@ checkpoint create_db_intervals:
         "logs/{refGenome}/db_intervals/log.txt"
     benchmark:
         "benchmarks/{refGenome}/db_intervals/benchmark.txt"
-    conda:
-        '../envs/bam2vcf.yml'
     shell:
         """
         gatk SplitIntervals -L {input.intervals} \
@@ -72,8 +68,6 @@ checkpoint create_gvcf_intervals:
         "logs/{refGenome}/gvcf_intervals/log.txt"
     benchmark:
         "benchmarks/{refGenome}/gvcf_intervals/benchmark.txt"
-    conda:
-        '../envs/bam2vcf.yml'
     shell:
         """
         gatk SplitIntervals -L {input.intervals} \

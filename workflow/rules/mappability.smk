@@ -12,8 +12,6 @@ rule genmap:
         "logs/{refGenome}/genmap/log.txt"
     benchmark:
         "benchmarks/{refGenome}/genmap/benchmark.txt"
-    conda:
-        "../envs/mappability.yml"
     shell:
         # snakemake creates the output directory before the shell command, but genmap doesnt like this. so we remove the directory first.
         """
@@ -28,8 +26,6 @@ rule mappability_bed:
     output:
         callable_sites = "results/{refGenome}/callable_sites/{prefix}_callable_sites_map.bed" if config['cov_filter'] else "results/{refGenome}/{prefix}_callable_sites.bed",
         tmp_map = temp("results/{refGenome}/callable_sites/{prefix}_temp_map.bed")
-    conda:
-        "../envs/mappability.yml"
     benchmark:
         "benchmarks/{refGenome}/mapbed/{prefix}_benchmark.txt"
     params:

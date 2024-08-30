@@ -5,8 +5,6 @@ rule compute_d4:
         "results/{refGenome}/callable_sites/{sample}.mosdepth.global.dist.txt",
         temp("results/{refGenome}/callable_sites/{sample}.per-base.d4"),
         summary="results/{refGenome}/callable_sites/{sample}.mosdepth.summary.txt"
-    conda:
-        "../envs/cov_filter.yml"
     log:
         "logs/{refGenome}/compute_d4/{sample}.txt"
     benchmark:
@@ -21,8 +19,6 @@ rule merge_d4:
         unpack(get_input_for_coverage)
     output:
         "results/{refGenome}/callable_sites/all_samples.d4"
-    conda:
-        "../envs/cov_filter.yml"
     log:
         "logs/{refGenome}/merge_d4/log.txt"
     benchmark:
@@ -55,8 +51,6 @@ rule create_cov_bed:
         cov_threshold_lower = config["cov_threshold_lower"],
         cov_threshold_upper = config["cov_threshold_upper"],
         cov_threshold_rel = config["cov_threshold_rel"]
-    conda:
-        "../envs/cov_filter.yml"
     script:
         "../scripts/create_coverage_bed.py"
 
@@ -67,8 +61,6 @@ rule callable_bed:
     output:
         callable_sites = "results/{refGenome}/{prefix}_callable_sites.bed",
         tmp_cov = temp("results/{refGenome}/callable_sites/{prefix}_temp_cov.bed")
-    conda:
-        "../envs/cov_filter.yml"
     benchmark:
         "benchmarks/{refGenome}/callable_bed/{prefix}_benchmark.txt"
     params:

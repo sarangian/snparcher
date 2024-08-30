@@ -5,8 +5,6 @@ rule bam_sumstats:
     output:
         cov = "results/{refGenome}/summary_stats/{sample}_coverage.txt",
         alnSum = "results/{refGenome}/summary_stats/{sample}_AlnSumMets.txt",
-    conda:
-        "../envs/fastq2bam.yml"
     shell:
         """
         samtools coverage --output {output.cov} {input.bam}
@@ -26,8 +24,6 @@ rule sentieon_bam_stats:
         gc = "results/{refGenome}/summary_stats/{sample}_gc_metrics.txt",
         gc_summary = "results/{refGenome}/summary_stats/{sample}_gc_summary.txt",
         mq = "results/{refGenome}/summary_stats/{sample}_mq_metrics.txt"
-    conda:
-        "../envs/sentieon.yml"
     shell:
         """
         export SENTIEON_LICENSE={params.lic}

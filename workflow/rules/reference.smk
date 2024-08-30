@@ -24,8 +24,6 @@ rule download_reference:
     params:
         dataset = "results/{refGenome}/data/genome/{refGenome}_dataset.zip",
         outdir = "results/{refGenome}/data/genome/{refGenome}"
-    conda:
-        "../envs/fastq2bam.yml"
     log:
         "logs/{refGenome}/download_ref/log.txt"
     benchmark:
@@ -50,8 +48,6 @@ rule index_reference:
         indexes = expand("results/{{refGenome}}/data/genome/{{refGenome}}.fna.{ext}", ext=["sa", "pac", "bwt", "ann", "amb"]),
         fai = "results/{refGenome}/data/genome/{refGenome}.fna.fai",
         dictf = "results/{refGenome}/data/genome/{refGenome}.dict"
-    conda:
-        "../envs/fastq2bam.yml"
     log:
         "logs/{refGenome}/index_ref/log.txt"
     benchmark:

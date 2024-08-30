@@ -22,8 +22,8 @@ rule bam2gvcf:
         minPrun = config['minP'],
         minDang = config['minD'],
         ploidy = config['ploidy'],
-    conda:
-        "../envs/bam2vcf.yml"
+    resources:
+        mem_mb_reduced = 8000
     shell:
         """
         gatk HaplotypeCaller \
@@ -49,8 +49,6 @@ rule concat_gvcfs:
         "benchmarks/{refGenome}/concat_gvcfs/{sample}.txt"
     resources:
         tmpdir = get_big_temp
-    conda:
-        "../envs/bcftools.yml"
     shell:
         """
         bcftools concat -D -a -Ou {input.gvcfs} 2> {log} | bcftools sort -T {resources.tmpdir} -Oz -o {output.gvcf} - 2>> {log}
@@ -68,9 +66,7 @@ rule bcftools_norm:
     benchmark:
         "benchmarks/{refGenome}/norm_gvcf/{sample}.txt"
     resources:
-        tmpdir = get_big_temp
-    conda:
-        "../envs/bcftools.yml"
+       	tmpdir = get_big_temp
     shell:
         """
         bcftools norm -m +any -Oz -o {output.gvcf} {input.gvcf} 2> {log}
@@ -107,9 +103,8 @@ rule gvcf2DB:
     benchmark:
         "benchmarks/{refGenome}/gatk_db_import/{l}.txt"
     resources:
-        tmpdir = get_big_temp
-    conda:
-        "../envs/bam2vcf.yml"
+        tmpdir = get_big_temp,
+	mem_mb_reduced = 8000
     shell:
         # NOTE: reader-threads > 1 useless if you specify multiple intervals
         # a forum suggested TILEDB_DISABLE_FILE_LOCKING=1 to remedy sluggish performance
@@ -145,13 +140,12 @@ rule DB2vcf:
         het = config['het_prior'],
         db = lambda wc, input: input.db[:-4]
     resources:
-        tmpdir = get_big_temp
+        tmpdir = get_big_temp,
+	mem_mb_reduced = 8000
     log:
         "logs/{refGenome}/gatk_genotype_gvcfs/{l}.txt"
     benchmark:
         "benchmarks/{refGenome}/gatk_genotype_gvcfs/{l}.txt"
-    conda:
-        "../envs/bam2vcf.yml"
     shell:
         """
         tar -xf {input.db}
@@ -178,8 +172,6 @@ rule filterVcfs:
     output:
         vcf = temp("results/{refGenome}/vcfs/intervals/filtered_L{l}.vcf.gz"),
         vcfidx = temp("results/{refGenome}/vcfs/intervals/filtered_L{l}.vcf.gz.tbi")
-    conda:
-        "../envs/bam2vcf.yml"
     log:
         "logs/{refGenome}/gatk_filter/{l}.txt"
     benchmark:
@@ -207,8 +199,6 @@ rule sort_gatherVcfs:
     output:
         vcfFinal = "results/{refGenome}/{prefix}_raw.vcf.gz",
         vcfFinalidx = "results/{refGenome}/{prefix}_raw.vcf.gz.tbi"
-    conda:
-        "../envs/bcftools.yml"
     log:
         "logs/{refGenome}/sort_gather_vcfs/{prefix}_log.txt"
     benchmark:

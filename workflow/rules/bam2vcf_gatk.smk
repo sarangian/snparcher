@@ -21,8 +21,6 @@ rule bam2gvcf:
         minPrun = config['minP'],
         minDang = config['minD'],
         ploidy = config['ploidy']
-    conda:
-        "../envs/bam2vcf.yml"
     shell:
         "gatk HaplotypeCaller "
         "--java-options \"-Xmx{resources.mem_mb_reduced}m\" "
@@ -75,8 +73,6 @@ rule gvcf2DB:
         "logs/{refGenome}/gatk_db_import.txt"
     benchmark:
         "benchmarks/{refGenome}/gatk_db_import.txt"
-    conda:
-        "../envs/bam2vcf.yml"
     shell:
         # NOTE: reader-threads > 1 useless if you specify multiple intervals
         # a forum suggested TILEDB_DISABLE_FILE_LOCKING=1 to remedy sluggish performance
@@ -115,8 +111,6 @@ rule DB2vcf:
         "logs/{refGenome}/gatk_genotype_gvcfs.txt"
     benchmark:
         "benchmarks/{refGenome}/gatk_genotype_gvcfs.txt"
-    conda:
-        "../envs/bam2vcf.yml"
     shell:
         """
         tar -xf {input.db}
@@ -143,8 +137,6 @@ rule filterVcfs:
     output:
         vcf = temp("results/{refGenome}/vcfs/filtered.vcf.gz"),
         vcfidx = temp("results/{refGenome}/vcfs/filtered.vcf.gz.tbi")
-    conda:
-        "../envs/bam2vcf.yml"
     log:
         "logs/{refGenome}/gatk_filter.txt"
     benchmark:
@@ -172,8 +164,6 @@ rule sort_gatherVcfs:
     output:
         vcfFinal = "results/{refGenome}/{prefix}_raw.vcf.gz",
         vcfFinalidx = "results/{refGenome}/{prefix}_raw.vcf.gz.tbi"
-    conda:
-        "../envs/bcftools.yml"
     log:
         "logs/{refGenome}/sort_gather_vcfs/{prefix}_log.txt"
     benchmark:
