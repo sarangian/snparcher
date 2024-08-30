@@ -1,4 +1,4 @@
-#!/opt/conda/envs/grenepipe/bin/python3
+#!/opt/conda/envs/snparcher/bin/python3
 from re import I
 from snakemake.exceptions import WorkflowError
 import os
