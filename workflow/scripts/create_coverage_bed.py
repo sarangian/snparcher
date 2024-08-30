@@ -1,4 +1,4 @@
-#!/opt/conda/envs/grenepipe/bin/python3
+#!/usr/bin/env python3
 from pyd4 import D4File,D4Builder
 import math
 
