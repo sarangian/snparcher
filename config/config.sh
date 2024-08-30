@@ -168,13 +168,14 @@ read R1_extn
 for i in `ls ${FASTQ_DIR} | grep -E '_2|R2'`;do echo $i;done
 echo -n "Please look into the read names and provide the extension after sample name Example: _R2_001.fastq.gz: "
 read R2_extn
-
+Run=1
 for i in `ls ${FASTQ_DIR} | grep ${R1_extn}`;do 
 BioSample=`basename $i ${R1_extn}`
 LibraryName=lib_${BioSample}
 fq1="data/symlink/"${BioSample}${R1_extn}
 fq2="data/symlink/"${BioSample}${R2_extn}
 echo "${BioSample},${LibraryName},${refGenome},${refPath},${Run},${BioProject},${fq1},${fq2}" >> ${ConfigDIR}/samples.csv
+Run=$((Run+1))
 done
 
 echo
