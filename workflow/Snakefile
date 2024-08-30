@@ -26,38 +26,6 @@ else:
 if config['cov_filter']:
     include: "rules/cov_filter.smk"
 
-module qc:
-    snakefile:
-        "modules/qc/Snakefile"
-    config:
-        config
-
-use rule * from qc as qc_*
-
-module mk:
-    snakefile:
-        "modules/mk/Snakefile"
-    config:
-        config
-
-use rule * from mk as mk_*
-
-module postprocess:
-    snakefile:
-        "modules/postprocess/Snakefile"
-    config:
-        config
-
-use rule * from postprocess as postprocess_*
-
-module trackhub:
-    snakefile:
-        "modules/trackhub/Snakefile"
-    config:
-        config
-
-use rule * from trackhub as trackhub_*
-
 rule all:
     input:
         get_output()
