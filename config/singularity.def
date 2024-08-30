@@ -1,0 +1,112 @@
+Bootstrap: docker
+From: clinicalgenomics/python3.11-venv-pyd4:latest
+
+%labels
+
+
+%files
+
+%post
+mkdir -p local_scratch storage work
+export DEBIAN_FRONTEND="noninteractive"
+apt-get -y update
+apt-get install -y wget git curl libuuid1 libbz2-dev libcurl4-gnutls-dev zlib1g zlib1g-dev zlib1g-dev liblzma-dev libncurses5-dev libncursesw5-dev  make cmake git build-essential rustc pkg-config squashfs-tools fuse3 cryptsetup runc 
+
+      
+rm -rf /var/lib/apt/lists/*
+. /venv/bin/activate
+pip3 install snakemake
+pip3 install pandas
+pip3 install numpy
+pip3 install scipy
+deactivate
+
+cd /opt
+
+
+	wget "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh" -O Miniconda_Install.sh
+	bash Miniconda_Install.sh -b -f -p /opt/conda >> /dev/null
+	rm Miniconda_Install.sh
+	cd /usr/local/bin
+        wget https://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/faToTwoBit
+        chmod 755 faToTwoBit
+        wget https://hgdownload.cse.ucsc.edu/admin/exe/linux.x86_64/twoBitInfo
+        chmod 755 twoBitInfo
+	
+	PATH="/opt/conda/bin":$PATH
+	. /opt/conda/etc/profile.d/conda.sh
+	/opt/conda/bin/conda init bash
+	/opt/conda/bin/conda update -n base -c defaults conda
+	echo "export PATH=\"/opt/conda/bin\":\$PATH" >> /root/.bashrc
+	conda config --add channels bioconda
+	conda config --add channels conda-forge
+
+	/opt/conda/bin/conda install -y -c conda-forge mamba 
+	apt-get clean
+	apt-get update
+
+	. /opt/conda/etc/profile.d/conda.sh
+        /opt/conda/bin/conda init bash
+
+        cd /opt
+        git clone https://github.com/sarangian/snparcher.git
+        chmod 755 -R /opt/snparcher
+        cd /opt/snparcher/workflow
+        find . -name "*.smk" -exec sed -i '/^\s*conda:/ s/^/# /' {} \;
+        find . -name "*.smk" -exec sed -i 's|^\s*"\(\.\./envs\)|# "\1|' {} +
+        cd /opt/snparcher
+
+        mamba create -c conda-forge -c bioconda -n snparcher "snakemake>=8" "python==3.11.4" 
+        . /opt/conda/etc/profile.d/conda.sh
+        /opt/conda/bin/conda init bash
+        conda activate snparcher
+
+        cd /opt/snparcher/workflow/envs
+        rm ucsc.yml
+        for i in *.yml;do 
+	. /opt/conda/etc/profile.d/conda.sh
+        /opt/conda/bin/conda init bash
+
+	env=$(basename "$i" .yml)
+        conda create -n $env
+
+        echo "Activating envronment and installing: "$env
+        conda activate $env
+        sleep 5
+        mamba env update -f $i
+	done
+
+        cp /opt/snparcher/workflow/scripts/*.py /opt/conda/envs/snparcher/bin
+        mv /opt/snparcher/config/config.sh /opt/conda/envs/snparcher/bin
+        chmod 755 /opt/conda/envs/snparcher/bin/config.sh
+	. /opt/conda/etc/profile.d/conda.sh
+        /opt/conda/bin/conda init bash
+        conda activate snparcher
+        echo "export PATH=\"/venv/bin\":\$PATH" >> /root/.bashrc
+	echo "export PATH=\"/opt/conda/envs/snparcher/bin\":\$PATH" >> /root/.bashrc
+	echo "export PATH=\"/opt/conda/envs/angsd/bin\":\$PATH" >> /root/.bashrc
+	echo "export PATH=\"/opt/conda/envs/bam2vcf/bin\":\$PATH" >> /root/.bashrc
+	echo "export PATH=\"/opt/conda/envs/bcftools/bin\":\$PATH" >> /root/.bashrc
+	echo "export PATH=\"/opt/conda/envs/cov_filter/bin\":\$PATH" >> /root/.bashrc
+	echo "export PATH=\"/opt/conda/envs/fastq2bam/bin\":\$PATH" >> /root/.bashrc
+	echo "export PATH=\"/opt/conda/envs/mappability/bin\":\$PATH" >> /root/.bashrc
+	echo "export PATH=\"/opt/conda/envs/sambamba/bin\":\$PATH" >> /root/.bashrc
+	echo "export PATH=\"/opt/conda/envs/sentieon/bin\":\$PATH" >> /root/.bashrc
+	bash -c "source /root/.bashrc"
+
+%environment
+ export PATH=$PATH:/opt/conda/bin
+ export PATH=$PATH:/usr/bin
+ export PATH=$PATH:/venv/bin
+ export PATH=$PATH:/opt/snparcher/workflow/scripts
+ export PATH=$PATH:/usr/local/bin
+ export PATH=$PATH:/opt/conda/envs/snparcher/bin
+ export PATH=$PATH:/opt/conda/envs/angsd/bin
+ export PATH=$PATH:/opt/conda/envs/bam2vcf/bin
+ export PATH=$PATH:/opt/conda/envs/bcftools/bin
+ export PATH=$PATH:/opt/conda/envs/cov_filter/bin
+ export PATH=$PATH:/opt/conda/envs/fastq2bam/bin
+ export PATH=$PATH:/opt/conda/envs/mappability/bin
+ export PATH=$PATH:/opt/conda/envs/sambamba/bin
+ export PATH=$PATH:/opt/conda/envs/sentieon/bin
+ export CONDA_PYTHON_EXE=/opt/conda/envs/snparcher/bin/python
