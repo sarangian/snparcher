@@ -191,4 +191,5 @@ echo "Please rename the config.yaml.template and resources.yaml.template to conf
 echo "Please update the values in config and resourse file according to your need"
 echo
 echo "example command to run snparcher: "
-echo "singularirty exec <snparcher sif path> snakemake -s /opt/snparcher/workflow/Snakefile -d ${DeliverablesDIR} --cores <CPU NO> --set-resources bam2gvcf:mem_mb_reduced=5000 --set-resources gvcf2DB:mem_mb_reduced=5000 --set-resources DB2vcf:mem_mb_reduced=5000"
+echo
+echo "singularirty exec /storage/colddata/basesolve/tools/snpanchor-v0.1.sif snakemake -s /opt/snparcher/workflow/Snakefile -d ${DeliverablesDIR} --cores 1 --set-resources bam2gvcf:mem_mb_reduced=5000 --set-resources gvcf2DB:mem_mb_reduced=5000 --set-resources DB2vcf:mem_mb_reduced=5000"
