@@ -52,7 +52,7 @@ rule create_cov_bed:
         cov_threshold_upper = config["cov_threshold_upper"],
         cov_threshold_rel = config["cov_threshold_rel"]
     shell:
-        "/usr/local/bin/python3 /opt/snparcher/scripts/create_coverage_bed.py"
+        "/usr/local/bin/python3 /opt/snparcher/workflow/scripts/create_coverage_bed.py"
 
 rule callable_bed:
     input:
