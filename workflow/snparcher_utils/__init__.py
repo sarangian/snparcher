@@ -8,14 +8,11 @@ try:
 except ImportError:
     # Snakmake 7.x.x
     from snakemake.exceptions import WorkflowError
-
+pd.set_option('future.no_silent_downcasting', True)
 def parse_sample_sheet(config: dict) -> pd.DataFrame:
     samples = (
         pd.read_table(config["samples"], sep=",", dtype=str)
         .replace(" ", "_", regex=True)
-        .infer_objects(
-            copy=False
-        )  # needed to maintain same behavior in future pandas versions
     )
     config_genomes = get_config_genomes(config, samples)
     refGenome = 'refGenome' in samples.columns and samples['refGenome'].notna().any()
