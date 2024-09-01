@@ -30,8 +30,6 @@ rule vcftools_individuals:
         samps = "results/{refGenome}/QC/{prefix}.samps.txt",
         summ = "results/{refGenome}/QC/{prefix}.FILTER.summary",
         het = "results/{refGenome}/QC/{prefix}.het"
-    conda:
-        "envs/vcftools_individuals.yml"
     params:
         prefix = lambda wc, input: os.path.join(input.vcf.rsplit("/", 1)[0], "QC", wc.prefix),
         min_depth = config["min_depth"]
@@ -59,8 +57,6 @@ rule subsample_snps:
         snpqc = "results/{refGenome}/QC/{prefix}_snpqc.txt",
         fai = "results/{refGenome}/QC/{prefix}.fna.fai",
         sumstats = "results/{refGenome}/QC/{prefix}_bam_sumstats.txt"
-    conda:
-        "envs/subsample_snps.yml"
     params:
         chr_ex = config["scaffolds_to_exclude"]
     log:
@@ -114,8 +110,6 @@ rule plink:
         dist = "results/{refGenome}/QC/{prefix}.dist",
         distid = "results/{refGenome}/QC/{prefix}.dist.id",
         king = "results/{refGenome}/QC/{prefix}.king"
-    conda:
-        "envs/plink.yml"
     log:
         "logs/{refGenome}/QC/plink/{prefix}.txt"
     shell:
@@ -155,8 +149,6 @@ rule admixture:
         outdir = lambda wc, input: input.bed.rsplit("/", 1)[0]
     log:
         "logs/{refGenome}/QC/admixture/{prefix}.txt"
-    conda:
-        "envs/admixture.yml"
     shell:
         """
         mv {input.bim_fixed} {input.bim} 2> {log}
@@ -207,7 +199,5 @@ rule qc_plots:
         GMKey = config['GoogleAPIKey']
     output: 
         qcpdf = "results/{refGenome}/QC/{prefix}_qc.html"
-    conda:
-        "envs/qc.yml"
-    script:
+    shell:
         "scripts/qc_dashboard_render.R"
