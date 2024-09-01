@@ -44,8 +44,6 @@ rule basic_filter:
     output:
         filtered = "results/{refGenome}/{prefix}_filtered.vcf.gz",
         filtered_idx = "results/{refGenome}/{prefix}_filtered.vcf.gz.csi"
-    conda:
-        "envs/filter.yml"
     shell:
         """
         bcftools view -S {input.include} -f .,PASS {input.vcf} -a -U -O u | bcftools +fill-tags -Ou |
@@ -63,8 +61,6 @@ rule update_bed:
     output:
         bed = "results/{refGenome}/postprocess/{prefix}_exclude_sites.bed",
         tmp_bed = temp("results/{refGenome}/postprocess/{prefix}_tmp.bed")
-    conda:
-        "envs/bed.yml"
     params:
         size_filter = config["contig_size"],
     shell:
@@ -81,8 +77,6 @@ rule strict_filter:
     output: 
         vcf = temp("results/{refGenome}/postprocess/{prefix}_filtered.TEMP.vcf.gz"),
         idx = temp("results/{refGenome}/postprocess/{prefix}_filtered.TEMP.vcf.gz.csi")
-    conda:
-        "envs/filter.yml"
     params:
         miss = config["missingness"],
         maf = config["maf"],
@@ -113,9 +107,7 @@ rule subset_indels:
     output: 
         vcf = "results/{refGenome}/{prefix}_clean_indels.vcf.gz",
         idx = "results/{refGenome}/{prefix}_clean_indels.vcf.gz.tbi"
-    conda:
-        "envs/filter.yml"
-    log:
+   log:
         "logs/{refGenome}/postprocess/{prefix}_subset_indels.txt"
     shell:
         """
@@ -133,8 +125,6 @@ rule subset_snps:
     output: 
         vcf = temp("results/{refGenome}/postprocess/{prefix}_clean_snps_1.vcf.gz"),
         idx = temp("results/{refGenome}/postprocess/{prefix}_clean_snps_1.vcf.gz.tbi")
-    conda:
-        "envs/filter.yml"    
     log:
         "logs/{refGenome}/postprocess/{prefix}_subset_snps.txt"
     shell:
@@ -154,8 +144,6 @@ rule drop_indel_SNPs:
         keep_snps = temp("results/{refGenome}/postprocess/{prefix}_keep_snp_positions.txt"),
         vcf = "results/{refGenome}/{prefix}_clean_snps.vcf.gz",
         idx = "results/{refGenome}/{prefix}_clean_snps.vcf.gz.tbi"
-    conda:
-        "envs/filter.yml"    
     log:
         "logs/{refGenome}/postprocess/{prefix}_drop_indel_snps.txt"
     shell:
