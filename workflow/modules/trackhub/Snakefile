@@ -54,8 +54,6 @@ rule strip_vcf:
         tbi = "results/{refGenome}/trackhub/info_stripped_snps.vcf.gz.tbi"
     log:
         "logs/{refGenome}/trackhub/strip_vcf.log"
-    conda:
-        "envs/trackhub.yml"
     shell:
         """
         bcftools annotate -x INFO,FORMAT/DP,FORMAT/GQ,FORMAT/PL {input.vcf} -O z -o {output.vcf}
@@ -98,8 +96,6 @@ rule calc_pi:
         temp( "results/{refGenome}/trackhub/{window}.Pi")
     log:
         "logs/{refGenome}/trackhub/Pi/{window}.log"
-    conda:
-        "envs/trackhub.yml"
     shell:
         """
         vcftools --gzvcf {input} --window-pi {wildcards.window} --stdout > {output} 2> {log}
@@ -120,9 +116,7 @@ rule bcftools_depth:
     output:
         bg = temp("results/{refGenome}/trackhub/depth.bg"),
         bw = "results/{refGenome}/trackhub/depth.bw"
-        
-    conda:
-        "envs/trackhub.yml"
+     
     shell:
         """
         bcftools query -f '%CHROM\t%POS\t%POS\t%DP\n' {input.vcf} | awk -v OFS='\t' '{{print $1,$2-1,$2,$4}}' > {output.bg}
@@ -137,9 +131,7 @@ rule vcftools_freq:
         bg = temp("results/{refGenome}/trackhub/allele_freq.bg"),
         bw = "results/{refGenome}/trackhub/allele_freq.bw"
     
-    conda:
-        "envs/trackhub.yml"
-    shell:
+   shell:
         """
         vcftools --gzvcf {input.vcf} --freq2 --stdout | cut -f 1,2,6 | tail -n +2 | awk -v OFS='\t' '{{print $1,$2-1,$2,$3}}' > {output.bg}
         bedGraphToBigWig {output.bg} {input.chrom_sizes} {output.bw}
@@ -160,8 +152,6 @@ rule bedgraph_to_bigwig:
         chrom_sizes = "results/{refGenome}/trackhub/chrom.sizes"
     output:
         "results/{refGenome}/trackhub/{file_type}_{window}.bw"
-    conda:
-        "envs/trackhub.yml"
     shell:
         "bedGraphToBigWig {input.bg} {input.chrom_sizes} {output}"
 
@@ -176,8 +166,6 @@ rule non_callable_sites:
     output:
         bed = temp("results/{refGenome}/trackhub/non_callable_sites.bed"),
         bb = "results/{refGenome}/trackhub/non_callable_sites.bb"
-    conda:
-        "envs/trackhub.yml"
     shadow:
         "minimal"
     shell:
