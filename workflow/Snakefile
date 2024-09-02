@@ -12,7 +12,6 @@ setup_curlrc()
 onerror: cleanup_curlrc()
 onsuccess: cleanup_curlrc()
 
-
 if config['sentieon']:
     include: "rules/sentieon.smk"
 else:
